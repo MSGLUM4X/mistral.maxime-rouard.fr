@@ -1,12 +1,15 @@
-import NextAuth from "next-auth"
+import NextAuth, {User} from "next-auth"
 import GitHub from "next-auth/providers/github"
 import Google from "next-auth/providers/google"
 import prisma from '@/lib/prisma'
 import {DefaultUser} from "@auth/core/types";
+import {authLog} from "@/lib/log";
 
 declare module "next-auth" {
     interface User extends DefaultUser {
         email_verified?: boolean;
+        ip?:string;
+        userAgent?:string;
     }
 }
 
@@ -21,6 +24,19 @@ const allowDomains = (email:string) => {
     }
     const domain = email.split("@")[1];
     return ALLOW_DOMAINS.includes(domain);
+}
+
+const computeLogAuth = (user:User) => {
+    const emailVerified = (user.email_verified === undefined) ? false : user.email_verified
+    return {
+        email: user.email || '',
+        emailVerified: emailVerified,
+    }
+}
+const logAuth = async (user:User,success:boolean) => {
+    const logs = computeLogAuth(user)
+    await authLog({...logs,success:success});
+    return success;
 }
 
 export const { auth, handlers, signIn, signOut  } = NextAuth({
@@ -91,21 +107,21 @@ export const { auth, handlers, signIn, signOut  } = NextAuth({
         async signIn({account, profile, user}) {
 
             if (!account || !profile || !profile.email) {
-                return false;
+                return logAuth(user,false);
             }
 
             switch (account.provider) {
                 case "github":
-                    if (!user.email_verified) return false;
+                    if (!user.email_verified) return logAuth(user,false);
                     break;
                 case "google":
-                    if (!profile.email_verified) return false;
+                    if (!profile.email_verified) return logAuth(user,false);
                     break;
                 default:
-                    return false;
+                    return logAuth(user,false);
             }
 
-            if (!allowDomains(profile.email)) return false;
+            if (!allowDomains(profile.email)) return logAuth(user,false);
 
             let dbUser = await prisma.user.findUnique({
                 where:{
@@ -121,7 +137,7 @@ export const { auth, handlers, signIn, signOut  } = NextAuth({
                 })
             }
             user.id = dbUser.id.toString();
-            return true;
+            return logAuth(user,true);
 
 
         },

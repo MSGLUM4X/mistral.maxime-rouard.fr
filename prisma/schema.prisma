@@ -47,6 +47,14 @@ model LLMModel {
   talk        Talk     @relation(fields: [talkId], references: [id], onDelete: Cascade)
 }
 
+model AuthLog {
+  id        String   @id @default(uuid())
+  email     String @unique
+  emailVerified Boolean
+  success   Boolean
+  updatedAt DateTime @default(now())
+}
+
 enum Role {
   system
   user
