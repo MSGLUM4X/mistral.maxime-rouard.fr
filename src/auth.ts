@@ -14,6 +14,8 @@ const ALLOW_EMAIL = JSON.parse(process.env.ALLOW_EMAIL ?? "[]") as string[];
 const ALLOW_DOMAINS = JSON.parse(process.env.ALLOW_DOMAINS ?? "[]") as string[];
 
 const allowDomains = (email:string) => {
+    //Accept all email
+    return true;
     if (ALLOW_EMAIL.includes(email)){
         return true;
     }

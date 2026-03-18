@@ -1,7 +1,7 @@
 'use client'
 
-import { useSession } from "next-auth/react"
-import {JSX, useState} from 'react';
+import {useSession} from "next-auth/react"
+import {useState} from 'react';
 import LogOutButton from "@/app/(chatbot)/components-layout/side-nav/log-out-button";
 import Image from "next/image";
 import Link from "next/link"
