@@ -10,10 +10,10 @@ import {WelcomeMessageSkeleton} from "@/ui/skeleton";
 const ChatBotPage = () => {
 
     return (
-        <FormClient className="w-full h-full flex flex-col items-center justify-start
+        <FormClient className="w-full h-full flex flex-col items-center justify-evenly
          bg-gradient-to-b from-gray-500 to-white dark:from-slate-900 dark:to-slate-light"
         >
-            <div className="mt-50 mb-30">
+            <div className="">
                 <Suspense fallback={<WelcomeMessageSkeleton/>}>
                     <WelcomeMessage/>
                 </Suspense>
