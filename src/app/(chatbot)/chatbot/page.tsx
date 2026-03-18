@@ -21,7 +21,6 @@ const ChatBotPage = () => {
 
             <div className="mb-10 flex flex-row items-center gap-20 w-4/5 max-w-4xl justify-between">
                 <TitleForm/>
-                <ModelForm/>
             </div>
             <PromptBar/>
         </FormClient>
